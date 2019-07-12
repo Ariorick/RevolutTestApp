@@ -5,7 +5,6 @@ import com.ariorick.revoluttestapp.App
 import com.ariorick.revoluttestapp.model.Currency
 import com.ariorick.revoluttestapp.net.CurrencyTypeAdapter
 import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -41,9 +40,7 @@ class AppModule {
             .addConverterFactory(
                 GsonConverterFactory.create(
                     GsonBuilder()
-                        .registerTypeAdapter(object : TypeToken<List<Currency>>() {
-
-                        }.type, CurrencyTypeAdapter())
+                        .registerTypeHierarchyAdapter(List::class.java as Class<List<Currency>>, CurrencyTypeAdapter())
                         .create()
                 )
             )

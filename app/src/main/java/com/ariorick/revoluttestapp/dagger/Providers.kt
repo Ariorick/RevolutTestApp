@@ -1,12 +1,13 @@
 package com.ariorick.revoluttestapp.dagger
 
 import com.ariorick.revoluttestapp.MainActivity
-import com.ariorick.revoluttestapp.fragment.CurrencyFragment
-import com.ariorick.revoluttestapp.fragment.CurrencyFragmentPresenter
-import com.ariorick.revoluttestapp.fragment.Presenter
+import com.ariorick.revoluttestapp.view.CurrencyFragment
+import com.ariorick.revoluttestapp.view.CurrencyFragmentPresenter
+import com.ariorick.revoluttestapp.view.Presenter
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import javax.inject.Scope
 
 @Module
 interface ActivityProvider {
@@ -19,6 +20,7 @@ interface ActivityProvider {
 @Module
 interface FragmentProvider {
 
+    @CurrencyFragmentScope
     @ContributesAndroidInjector
     fun provideCurrencyFragment(): CurrencyFragment
 
@@ -26,6 +28,10 @@ interface FragmentProvider {
     fun bindPresenter(currencyFragmentPresenter: CurrencyFragmentPresenter): Presenter
 
 }
+
+@Scope
+@Retention(AnnotationRetention.RUNTIME)
+annotation class CurrencyFragmentScope
 
 
 

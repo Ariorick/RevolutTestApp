@@ -1,7 +1,7 @@
 package com.ariorick.revoluttestapp
 
 import android.os.Bundle
-import com.ariorick.revoluttestapp.fragment.CurrencyFragment
+import com.ariorick.revoluttestapp.view.CurrencyFragment
 import dagger.android.support.DaggerAppCompatActivity
 
 class MainActivity : DaggerAppCompatActivity() {

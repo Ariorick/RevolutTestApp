@@ -1,49 +1,41 @@
 package com.ariorick.revoluttestapp.net
 
+import com.ariorick.revoluttestapp.model.Currency
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonIOException
 import com.google.gson.TypeAdapter
-import com.google.gson.internal.bind.ArrayTypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-
 import java.io.IOException
-import java.util.*
+
 
 class CurrencyTypeAdapter : TypeAdapter<List<Currency>>() {
 
-    private val mGson = Gson()
-    private val delegate = mGson.getAdapter<Currency>(Currency::class.java)
-    private val mArrayTypeAdapter = ArrayTypeAdapter<Currency>(mGson, delegate, Currency::class.java)
-    private val elementAdapter = mGson.getAdapter(JsonElement::class.java)
+    private val elementAdapter = Gson().getAdapter(JsonElement::class.java)
 
     override fun write(out: JsonWriter, value: List<Currency>) {
 
     }
 
     @Throws(IOException::class)
-    override fun read(`in`: JsonReader): List<Currency> {
-        val jsonElement = elementAdapter.read(`in`)
+    override fun read(reader: JsonReader): List<Currency> {
+        val jsonElement = elementAdapter.read(reader)
 
         if (jsonElement.isJsonObject) {
-            var jsonObject = jsonElement.asJsonObject
-            if (jsonObject.has("android") && jsonObject.get("android").isJsonObject) {
-                jsonObject = jsonObject.getAsJsonObject("android")
+            val jsonObject = jsonElement.asJsonObject
 
-                var locale = Locale.getDefault().language
-                if (!jsonObject.has(locale)) {
-                    locale = "ru"
-                }
-                if (!jsonObject.has(locale)) {
-                    throw JsonIOException("No such locale in json")
-                }
+            val base = jsonObject.get("base").asString
 
-                if (jsonObject.get(locale).isJsonArray) {
-                    val jsonArray = jsonObject.getAsJsonArray(locale)
-                    return Arrays.asList<Currency>(*mArrayTypeAdapter.fromJsonTree(jsonArray) as Array<Currency>)
-                }
+            val list = ArrayList<Currency>()
+            val rates = jsonObject.getAsJsonObject("rates").entrySet()
+
+            list.add(Currency(base, base, 1f))
+            for (rate in rates) {
+                list.add(Currency(rate.key, base, rate.value.asFloat))
             }
+
+            return list
         }
         throw JsonIOException("Wrong json structure")
     }

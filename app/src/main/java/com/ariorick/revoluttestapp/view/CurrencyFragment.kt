@@ -1,4 +1,4 @@
-package com.ariorick.revoluttestapp.fragment
+package com.ariorick.revoluttestapp.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import com.ariorick.revoluttestapp.mvp.MvpPresenter
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class CurrencyFragment : DaggerFragment() {
+class CurrencyFragment : DaggerFragment(), View {
 
     @Inject
     lateinit var presenter: Presenter
@@ -24,7 +24,8 @@ class CurrencyFragment : DaggerFragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): android.view.View? {
         return inflater.inflate(R.layout.fragment_currency, container, false)
@@ -32,6 +33,12 @@ class CurrencyFragment : DaggerFragment() {
 
     override fun onViewCreated(view: android.view.View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        presenter.attachView(this)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        presenter.detachView()
     }
 
 }
