@@ -5,7 +5,7 @@ import io.reactivex.disposables.Disposable
 
 abstract class BasePresenter<T : MvpView> : MvpPresenter<T> {
 
-    private var view: T? = null
+    protected var view: T? = null
 
     private val viewDependingCompositeDisposable = CompositeDisposable()
     private val wholeComponentLifecycleCompositeDisposable = CompositeDisposable()

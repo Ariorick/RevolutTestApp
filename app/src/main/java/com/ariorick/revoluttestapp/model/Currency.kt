@@ -6,7 +6,11 @@ data class Currency(
     val value: Float
 ) : Comparable<Currency> {
 
+    val isBase = name == base
+
     override fun compareTo(other: Currency): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return if (isBase.compareTo(other.isBase) == 0) {
+            name.compareTo(other.name)
+        } else -1 * isBase.compareTo(other.isBase)
     }
 }
