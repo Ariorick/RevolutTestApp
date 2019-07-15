@@ -61,6 +61,7 @@ class CurrencyFragmentPresenter @Inject constructor(
             }
         ).flatMapSingle { it }
             .filter { it.isNotEmpty() }
+            .map { it.sorted() }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
