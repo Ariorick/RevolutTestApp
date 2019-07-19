@@ -30,12 +30,12 @@ abstract class BasePresenter<T : MvpView> : MvpPresenter<T> {
         view = null
     }
 
-    protected fun addDisposable(subscription: Disposable) {
-        viewDependingCompositeDisposable.add(subscription)
+    protected fun addDisposable(disposable: Disposable) {
+        viewDependingCompositeDisposable.add(disposable)
     }
 
-    protected fun addViewIndependentDisposable(subscription: Disposable) {
-        wholeComponentLifecycleCompositeDisposable.add(subscription)
+    protected fun addViewIndependentDisposable(disposable: Disposable) {
+        wholeComponentLifecycleCompositeDisposable.add(disposable)
     }
 
     class MvpViewNotAttachedException :

@@ -25,27 +25,53 @@ class CurrencyFragmentPresenter @Inject constructor(
     private val defaultValue = 1f
     private var selectedBase = defaultBase
 
-    private lateinit var loadCurrencyConnectableObservable: Flowable<List<Currency>>
-    private lateinit var userEventPublishSubject: ReplaySubject<Pair<String, Float>>
+    private lateinit var userEventSubject: ReplaySubject<Pair<String, Float>>
 
 
     override fun attachView(mvpView: View) {
         super.attachView(mvpView)
-        currencyAdapter.presenter = this
 
-        loadCurrencyConnectableObservable = Flowable.interval(1, TimeUnit.SECONDS)
+        userEventSubject = ReplaySubject.create()
+        val userEventFlowable = userEventSubject.toFlowable(BackpressureStrategy.LATEST)
+
+
+        addDisposable(createCalculatedCurrencyObservable(
+            createLoadCurrencyConnectableFlowable(),
+            userEventFlowable
+        ).subscribe(
+            {
+                currencyAdapter.setData(it)
+                //if (baseChanged) view?.scrollUp()
+            },
+            {
+                it.printStackTrace()
+                view?.showConnectionError()
+            }
+        ))
+
+        userEventSubject.onNext(Pair(defaultBase, defaultValue))
+        currencyAdapter.setBase = { base, value ->
+            selectedBase = base
+            userEventSubject.onNext(Pair(base, value))
+        }
+    }
+
+    private fun createLoadCurrencyConnectableFlowable(): Flowable<List<Currency>> {
+        return Flowable.interval(1, TimeUnit.SECONDS)
             .flatMapSingle { currencySource.getCurrency(selectedBase) }
             .retry { t: Throwable ->
                 view?.showConnectionError()
                 true
             }
             .doOnNext { view?.hideConnectionError() }
+    }
 
-        userEventPublishSubject = ReplaySubject.create()
-        val userEventFlowable = userEventPublishSubject.toFlowable(BackpressureStrategy.LATEST)
-
-        addDisposable(Flowable.combineLatest<List<Currency>, Pair<String, Float>, Single<List<Currency>>>(
-            loadCurrencyConnectableObservable,
+    private fun createCalculatedCurrencyObservable(
+        currencyFlowable: Flowable<List<Currency>>,
+        userEventFlowable: Flowable<Pair<String, Float>>
+    ): Flowable<List<Currency>> {
+        return Flowable.combineLatest<List<Currency>, Pair<String, Float>, Single<List<Currency>>>(
+            currencyFlowable,
             userEventFlowable,
             BiFunction { list, baseAndValuePair ->
                 if (list[0].base == baseAndValuePair.first) {
@@ -64,23 +90,6 @@ class CurrencyFragmentPresenter @Inject constructor(
             .map { it.sorted() }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    currencyAdapter.setData(it)
-                    //if (baseChanged) view?.scrollUp()
-                },
-                {
-                    it.printStackTrace()
-                    view?.showConnectionError()
-                }
-            ))
-
-        userEventPublishSubject.onNext(Pair(defaultBase, defaultValue))
-    }
-
-    override fun setBase(base: String, value: Float) {
-        selectedBase = base
-        userEventPublishSubject.onNext(Pair(base, value))
     }
 
 }

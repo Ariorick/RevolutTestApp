@@ -11,7 +11,7 @@ class MainActivity : DaggerAppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, CurrencyFragment.newInstance())
+            .replace(R.id.container, CurrencyFragment())
             .commit()
 
     }

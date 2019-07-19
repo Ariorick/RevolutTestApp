@@ -22,15 +22,6 @@ class CurrencyFragment : DaggerFragment(), View {
 
     private lateinit var snackbar: Snackbar
 
-    companion object {
-        fun newInstance(): CurrencyFragment {
-            val args = Bundle()
-            val fragment = CurrencyFragment()
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -65,7 +56,7 @@ class CurrencyFragment : DaggerFragment(), View {
     }
 
     override fun scrollUp() {
-        rv_currency.scrollToPosition(0)
+        rv_currency?.scrollToPosition(0)
     }
 
     override fun onDestroyView() {
@@ -75,7 +66,4 @@ class CurrencyFragment : DaggerFragment(), View {
 
 }
 
-interface Presenter : MvpPresenter<View> {
-
-    fun setBase(base: String, value: Float)
-}
+interface Presenter : MvpPresenter<View>

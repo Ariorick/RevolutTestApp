@@ -18,7 +18,7 @@ import kotlin.collections.ArrayList
 @CurrencyFragmentScope
 class CurrencyAdapter @Inject constructor() : RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
 
-    lateinit var presenter: Presenter
+    lateinit var setBase: (String, Float) -> Unit
     private var data: List<Currency> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -50,7 +50,7 @@ class CurrencyAdapter @Inject constructor() : RecyclerView.Adapter<CurrencyAdapt
         fun bind(name: String, isBase: Boolean, value: Float) {
             tvName.text = name
 
-            etValue.setOnFocusChangeListener { v, hasFocus -> if (hasFocus) presenter.setBase(name, value) }
+            etValue.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) setBase(name, value) }
 
             etValue.removeTextChangedListener(textWatcher)
             if (!etValue.isFocused) etValue.setText(String.format("$value", Locale.ENGLISH))
@@ -60,14 +60,14 @@ class CurrencyAdapter @Inject constructor() : RecyclerView.Adapter<CurrencyAdapt
         inner class TextWatcher : android.text.TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 try {
-                    presenter.setBase(
+                    setBase(
                         data[this@ViewHolder.adapterPosition].name,
                         Scanner(p0.toString())
                             .useLocale(Locale.ENGLISH)
                             .nextFloat()
                     )
                 } catch (e: Exception) {
-                    presenter.setBase(data[this@ViewHolder.adapterPosition].name, 0f)
+                    setBase(data[this@ViewHolder.adapterPosition].name, 0f)
                 }
             }
 

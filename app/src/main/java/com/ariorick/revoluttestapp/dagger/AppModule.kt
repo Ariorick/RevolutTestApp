@@ -2,6 +2,7 @@ package com.ariorick.revoluttestapp.dagger
 
 import android.content.Context
 import com.ariorick.revoluttestapp.App
+import com.ariorick.revoluttestapp.CURRENCY_SERVER_ADDRESS
 import com.ariorick.revoluttestapp.model.Currency
 import com.ariorick.revoluttestapp.net.CurrencyTypeAdapter
 import com.google.gson.GsonBuilder
@@ -35,7 +36,7 @@ class AppModule {
     @Singleton
     internal fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://revolut.duckdns.org/")
+            .baseUrl(CURRENCY_SERVER_ADDRESS)
             .client(okHttpClient)
             .addConverterFactory(
                 GsonConverterFactory.create(

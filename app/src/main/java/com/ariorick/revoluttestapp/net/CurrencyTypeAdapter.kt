@@ -28,12 +28,10 @@ class CurrencyTypeAdapter : TypeAdapter<List<Currency>>() {
             val base = jsonObject.get("base").asString
 
             val list = ArrayList<Currency>()
-            val rates = jsonObject.getAsJsonObject("rates").entrySet()
-
             list.add(Currency(base, base, 1f))
-            for (rate in rates) {
-                list.add(Currency(rate.key, base, rate.value.asFloat))
-            }
+            jsonObject.getAsJsonObject("rates")
+                .entrySet()
+                .forEach { list.add(Currency(it.key, base, it.value.asFloat)) }
 
             return list
         }

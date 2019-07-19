@@ -20,9 +20,7 @@ class CurrencyDiffCallback(
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem: Currency = oldList[oldItemPosition]
-        val newItem: Currency = newList[newItemPosition]
-        return oldItem.value == newItem.value && oldItem.base == newItem.base
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
